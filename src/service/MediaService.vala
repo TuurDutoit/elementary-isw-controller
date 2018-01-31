@@ -15,5 +15,18 @@
 * License along with this program; if not, write to the
 * Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
 * Boston, MA 02110-1301 USA
+*
 */
 
+namespace isw.controller.service {
+
+    public class MediaService {
+        private const string BASE_URL = "https://m.isw/api/";
+
+        public MediaService () {
+            
+        }
+
+    }
+
+}

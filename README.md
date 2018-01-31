@@ -1,22 +1,17 @@
-# Nimbus
-[![Get it on AppCenter](https://appcenter.elementary.io/badge.svg)](https://appcenter.elementary.io/com.github.danrabbit.nimbus)
+# ISW Controller
+[![Get it on AppCenter](https://appcenter.elementary.io/badge.svg)](https://appcenter.elementary.io/com.github.tuurdutoit.elementary-isw-controller)
 
-See the current temperature and weather conditions for your location with this minimal color-changing applet.
+Control ISW systems, like media, airconditioner and the shop
 
-![Nimbus Screenshot](https://raw.github.com/danrabbit/nimbus/master/data/screenshot.png)
+![ISW Controller Screenshot](https://raw.github.com/tuurdutoit/elementary-isw-controller/master/data/screenshot.png)
 
 ## Building, Testing, and Installation
 
 
 You'll need the following dependencies to build:
-* libgeoclue-2-dev
 * libgtk-3-dev
-* libgweather-3-dev
 * meson
 * valac
-
-You'll need the following dependencies to run:
-* geoclue-2.0
 
 Run `meson build` to configure the build environment and run `ninja test` to build and run automated tests
 
@@ -24,7 +19,7 @@ Run `meson build` to configure the build environment and run `ninja test` to bui
     cd build
     ninja test
 
-To install, use `ninja install`, then execute with `com.github.danrabbit.nimbus`
+To install, use `ninja install`, then execute with `com.github.tuurdutoit.elementary-isw-controller`
 
     sudo ninja install
-    com.github.danrabbit.nimbus
+    com.github.tuurdutoit.elementary-isw-controller

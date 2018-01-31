@@ -1,5 +1,5 @@
 /*
-* Copyright (c) 2017 Daniel Foré (http://danielfore.com)
+* Copyright (c) 2018 Tuur Dutoit (https://tuurdutoit.be)
 *
 * This program is free software; you can redistribute it and/or
 * modify it under the terms of the GNU General Public
@@ -17,168 +17,66 @@
 * Boston, MA 02110-1301 USA
 */
 
-public class MainWindow : Gtk.Dialog {
-    private const string COLOR_PRIMARY = """
-        @define-color colorPrimary %s;
-        .background,
-        .titlebar {
-            transition: all 600ms ease-in-out;
-        }
-    """;
+using isw.controller.view;
 
-    private Gtk.Stack stack;
-    private GWeather.Location location;
-    private GWeather.Info weather_info;
+namespace isw.controller {
 
-    public MainWindow (Gtk.Application application) {
-        Object (application: application,
-                icon_name: "com.github.danrabbit.nimbus",
+    public class MainWindow : Gtk.ApplicationWindow {
+
+        public MainWindow (Gtk.Application application) {
+            Object (
+                application: application,
+                icon_name: "com.github.tuurdutoit.elementary-isw-controller",
+                title: _("ISW Controller"),
                 resizable: false,
-                title: _("Nimbus"),
-                height_request: 272,
-                width_request: 500);
-    }
+                height_request: 700
+            );
+        }
 
-    construct {
-        get_style_context ().add_class (Gtk.STYLE_CLASS_FLAT);
-        set_keep_below (true);
-        stick ();
+        construct {
+            get_style_context ().add_class (Gtk.STYLE_CLASS_FLAT);
+            set_keep_below (true);
+            stick ();
+            //use_header_bar = 1;
 
-        get_location.begin ();
+            var stack = new Gtk.Stack ();
+            stack.transition_type = Gtk.StackTransitionType.SLIDE_LEFT_RIGHT;
+            stack.vhomogeneous = true;
+            stack.add_titled (new MediaView (), "now-playing", _("Now Playing"));
+            stack.add_titled (new Gtk.Spinner (), "playlist", _("Playlist"));
+            stack.add_titled (new SoundboardView (), "soundboard", _("Soundboard"));
+            stack.add_titled (new Gtk.Spinner (), "aircon", _("Airconditioner"));
+            stack.add_titled (new Gtk.Spinner (), "shop", _("Shop"));
 
-        weather_info = new GWeather.Info (location, GWeather.ForecastType.LIST);
+            var switcher = new Gtk.StackSwitcher ();
+            switcher.set_halign (Gtk.Align.CENTER);
+            switcher.set_stack (stack);
 
-        var weather_icon = new Gtk.Image.from_icon_name (weather_info.get_symbolic_icon_name (), Gtk.IconSize.DIALOG);
+            this.add (stack);
 
-        var weather_label = new Gtk.Label (weather_info.get_sky ());
-        weather_label.halign = Gtk.Align.END;
-        weather_label.hexpand = true;
-        weather_label.margin_top = 6;
-        weather_label.get_style_context ().add_class ("weather");
+            //  var content_box = get_content_area () as Gtk.Box;
+            //  content_box.border_width = 0;
+            //  content_box.add (stack);
+            //  content_box.show_all ();
 
-        var temp_label = new Gtk.Label (weather_info.get_temp ());
-        temp_label.halign = Gtk.Align.START;
-        temp_label.margin_bottom = 3;
-        temp_label.get_style_context ().add_class ("temperature");
+            //  var action_box = get_action_area () as Gtk.Box;
+            //  action_box.visible = false;
 
-        var location_label = new Gtk.Label ("");
-        location_label.halign = Gtk.Align.END;
-        location_label.margin_bottom = 12;
+            var headerbar = new Gtk.HeaderBar ();
+            headerbar.show_close_button = true;
+            headerbar.set_title (_("ISW Controller"));
+            headerbar.set_custom_title (switcher);
+            headerbar.show_all ();
+            set_titlebar (headerbar);
 
-        var grid = new Gtk.Grid ();
-        grid.column_spacing = 12;
-        grid.margin_bottom = 6;
-        grid.margin_end = 18;
-        grid.margin_start = 18;
-        grid.attach (weather_icon, 0, 0, 1, 2);
-        grid.attach (temp_label, 1, 0, 1, 2);
-        grid.attach (weather_label, 2, 0, 1, 1);
-        grid.attach (location_label, 2, 1, 1, 1);
-
-        var spinner = new Gtk.Spinner ();
-        spinner.active = true;
-        spinner.halign = Gtk.Align.CENTER;
-        spinner.vexpand = true;
-
-        var alert_label = new Gtk.Label (_("Unable to Get Location"));
-
-        stack = new Gtk.Stack ();
-        stack.transition_type = Gtk.StackTransitionType.CROSSFADE;
-        stack.vhomogeneous = true;
-        stack.add (spinner);
-        stack.add_named (grid, "weather");
-        stack.add_named (alert_label, "alert");
-
-        var content_box = get_content_area () as Gtk.Box;
-        content_box.border_width = 0;
-        content_box.add (stack);
-        content_box.show_all ();
-
-        var action_box = get_action_area () as Gtk.Box;
-        action_box.visible = false;
-
-        button_press_event.connect ((e) => {
-            if (e.button == Gdk.BUTTON_PRIMARY) {
-                begin_move_drag ((int) e.button, (int) e.x_root, (int) e.y_root, e.time);
-                return true;
-            }
-            return false;
-        });
-
-        focus_in_event.connect (() => {
-            weather_info.update ();
-        });
-
-        weather_info.updated.connect (() => {
-            if (location == null) {
-                return;
-            }
-
-            location_label.label = dgettext("libgweather-locations", location.get_city_name ());
-
-            weather_icon.icon_name = weather_info.get_symbolic_icon_name ();
-            weather_label.label = dgettext("libgweather", weather_info.get_sky ());
-
-            double temp;
-            weather_info.get_value_temp (GWeather.TemperatureUnit.DEFAULT, out temp);
-            temp_label.label = _("%i°").printf ((int) temp);
-
-            string color_primary;
-
-            switch (weather_icon.icon_name) {
-                case "weather-clear-night-symbolic":
-                case "weather-few-clouds-night-symbolic":
-                    color_primary = "#183048";
-                    break;
-                case "weather-few-clouds-symbolic":
-                case "weather-overcast-symbolic":
-                case "weather-showers-symbolic":
-                case "weather-showers-scattered-symbolic":
-                    color_primary = "#68758e";
-                    break;
-                case "weather-snow-symbolic":
-                    color_primary = "#6fc3ff";
-                    break;
-                default:
-                    color_primary = "#42baea";
-                    break;
-            }
-
-            var provider = new Gtk.CssProvider ();
-            try {
-                var colored_css = COLOR_PRIMARY.printf (color_primary);
-                provider.load_from_data (colored_css, colored_css.length);
-
-                Gtk.StyleContext.add_provider_for_screen (Gdk.Screen.get_default (), provider, Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION);
-            } catch (GLib.Error e) {
-                critical (e.message);
-            }
-        });
-    }
-
-    public async void get_location () {
-        try {
-            var simple = yield new GClue.Simple ("com.github.danrabbit.nimbus", GClue.AccuracyLevel.CITY, null);
-
-            simple.notify["location"].connect (() => {
-                on_location_updated (simple.location.latitude, simple.location.longitude);
+            button_press_event.connect ((e) => {
+                if (e.button == Gdk.BUTTON_PRIMARY) {
+                    begin_move_drag ((int) e.button, (int) e.x_root, (int) e.y_root, e.time);
+                    return true;
+                }
+                return false;
             });
-
-            on_location_updated (simple.location.latitude, simple.location.longitude);
-        } catch (Error e) {
-            warning ("Failed to connect to GeoClue2 service: %s", e.message);
-            stack.visible_child_name = "alert";
-            return;
         }
     }
 
-    public void on_location_updated (double latitude, double longitude) {
-        location = GWeather.Location.get_world ();
-        location = location.find_nearest_city (latitude, longitude);
-        if (location != null) {
-            weather_info.location = location;
-            weather_info.update ();
-            stack.visible_child_name = "weather";
-        }
-    }
 }

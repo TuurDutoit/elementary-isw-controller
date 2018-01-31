@@ -1,9 +1,9 @@
 Format: http://dep.debian.net/deps/dep5
-Upstream-Name: nimbus
-Source: https://github.com/danrabbit/nimbus
+Upstream-Name: elementary-isw-controller
+Source: https://github.com/tuurdutoit/elementary-isw-controller
 
 Files: *
-Copyright: 2017 Daniel Foré <daniel@elementary.io>
+Copyright: 2018 Tuur Dutoit <me@tuurdutoit.be>
 License: GPL-3.0+
 
 License: GPL-3.0+

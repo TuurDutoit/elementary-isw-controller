@@ -1,5 +1,5 @@
 /*
-* Copyright (c) 2017 Daniel Foré (http://danielfore.com)
+* Copyright (c) 2018 Tuur Dutoit (https://tuurdutoit.be)
 *
 * This program is free software; you can redistribute it and/or
 * modify it under the terms of the GNU General Public
@@ -18,56 +18,64 @@
 *
 */
 
-public class Nimbus : Gtk.Application {
-    public Nimbus () {
-        Object (application_id: "com.github.danrabbit.nimbus",
-        flags: ApplicationFlags.FLAGS_NONE);
-    }
+namespace isw.controller {
 
-    protected override void activate () {
-        if (get_windows ().length () > 0) {
-            get_windows ().data.present ();
-            return;
+    public class ISWController : Gtk.Application {
+
+        public ISWController () {
+            Object (
+                application_id: "com.github.tuurdutoit.elementary-isw-controller",
+                flags: ApplicationFlags.FLAGS_NONE
+            );
         }
 
-        var app_window = new MainWindow (this);
-
-        var settings = new Settings ("com.github.danrabbit.nimbus");
-
-        var window_x = settings.get_int ("window-x");
-        var window_y = settings.get_int ("window-y");
-
-        if (window_x != -1 ||  window_y != -1) {
-            app_window.move (window_x, window_y);
-        }
-
-        app_window.show ();
-
-        var quit_action = new SimpleAction ("quit", null);
-
-        add_action (quit_action);
-        add_accelerator ("<Control>q", "app.quit", null);
-
-        var provider = new Gtk.CssProvider ();
-        provider.load_from_resource ("com/github/danrabbit/nimbus/Application.css");
-        Gtk.StyleContext.add_provider_for_screen (Gdk.Screen.get_default (), provider, Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION);
-
-        quit_action.activate.connect (() => {
-            if (app_window != null) {
-                app_window.destroy ();
+        protected override void activate () {
+            if (get_windows ().length () > 0) {
+                get_windows ().data.present ();
+                return;
             }
-        });
 
-        app_window.state_changed.connect (() => {
-            int root_x, root_y;
-            app_window.get_position (out root_x, out root_y);
-            settings.set_int ("window-x", root_x);
-            settings.set_int ("window-y", root_y);
-        });
+            var app_window = new MainWindow (this);
+
+            var settings = new Settings ("com.github.tuurdutoit.elementary-isw-controller");
+
+            var window_x = settings.get_int ("window-x");
+            var window_y = settings.get_int ("window-y");
+
+            if (window_x != -1 ||  window_y != -1) {
+                app_window.move (window_x, window_y);
+            }
+
+            app_window.show ();
+
+            var quit_action = new SimpleAction ("quit", null);
+
+            add_action (quit_action);
+            add_accelerator ("<Control>q", "app.quit", null);
+
+            var provider = new Gtk.CssProvider ();
+            provider.load_from_resource ("com/github/tuurdutoit/elementary-isw-controller/Application.css");
+            Gtk.StyleContext.add_provider_for_screen (Gdk.Screen.get_default (), provider, Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION);
+
+            quit_action.activate.connect (() => {
+                if (app_window != null) {
+                    app_window.destroy ();
+                }
+            });
+
+            app_window.state_changed.connect (() => {
+                int root_x, root_y;
+                app_window.get_position (out root_x, out root_y);
+                settings.set_int ("window-x", root_x);
+                settings.set_int ("window-y", root_y);
+            });
+        }
+
+        public static int main (string[] args) {
+            var app = new ISWController ();
+            return app.run (args);
+        }
+
     }
 
-    public static int main (string[] args) {
-        var app = new Nimbus ();
-        return app.run (args);
-    }
 }

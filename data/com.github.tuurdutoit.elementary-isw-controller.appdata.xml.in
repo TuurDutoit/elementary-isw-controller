@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Copyright 2018 Tuur Dutoit <me@tuurdutoit.be> -->
+<component type="desktop-application">
+    <id>com.github.tuurdutoit.elementary-isw-controller.desktop</id>
+    <metadata_license>CC0-1.0</metadata_license>
+    <project_license>GPL-3.0+</project_license>
+    <name>ISW Controller</name>
+    <summary>Control ISW systems</summary>
+    <description>
+        <p>See what's playing and add your own songs, play sounds from the soundboard, control the airconditioner and buy stuff in the shop.</p>
+        <ul>
+            <li>Control the media player, airconditioner and shop, right from your desktop</li>
+            <li>Stays out of your way by always sticking to the desktop</li>
+            <li>Move the window by dragging any part of it</li>
+            <li>Quit with the handy shortcut Ctrl + Q</li>
+        </ul>
+    </description>
+    <provides>
+        <binary>com.github.tuurdutoit.elementary-isw-controller</binary>
+    </provides>
+    <screenshots>
+        <screenshot type="default">
+            <image>https://raw.githubusercontent.com/tuurdutoit/elementary-isw-controller/master/data/screenshot.png</image>
+        </screenshot>
+    </screenshots>
+    <developer_name>Tuur Dutoit</developer_name>
+    <url type="homepage">https://tuurdutoit.be</url>
+    <url type="bugtracker">https://github.com/tuurdutoit/elementary-isw-controller/issues</url>
+    <custom>
+        <value key="x-appcenter-color-primary">#e9f4fc</value>
+        <value key="x-appcenter-color-primary-text">#044b6c</value>
+    </custom>
+</component>

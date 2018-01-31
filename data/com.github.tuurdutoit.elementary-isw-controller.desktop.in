@@ -1,0 +1,10 @@
+[Desktop Entry]
+Name=ISW Controller
+Comment=Control ISW systems
+Exec=com.github.tuurdutoit.elementary-isw-controller
+Icon=com.github.tuurdutoit.elementary-isw-controller
+Keywords=media;
+Terminal=false
+Type=Application
+StartupNotify=true
+Categories=GTK;Utility;

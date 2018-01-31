@@ -1,4 +1,4 @@
-project('com.github.danrabbit.nimbus', ['vala', 'c'],
+project('com.github.tuurdutoit.elementary-isw-controller', ['vala', 'c'],
     version: '0.2.0'
 )
 
@@ -24,17 +24,24 @@ c_args = [
 ]
 
 executable(
-    'com.github.danrabbit.nimbus',
+    'com.github.tuurdutoit.elementary-isw-controller',
     'src/Application.vala',
     'src/MainWindow.vala',
+    'src/view/MediaView.vala',
+    'src/view/SoundboardView.vala',
+    'src/service/MediaService.vala',
+    'src/service/SoundboardService.vala',
+    'src/service/ISWService.vala',
     asresources,
     c_args: c_args,
     dependencies: [
         dependency('glib-2.0'),
         dependency('gobject-2.0'),
+        dependency('gee-0.8'),
         dependency('gtk+-3.0'),
-        dependency('gweather-3.0'),
-        dependency('libgeoclue-2.0')
+        dependency('granite'),
+        dependency('libsoup-2.4'),
+        dependency('json-glib-1.0')
     ],
     install : true
 )
